@@ -49,6 +49,36 @@ const listReducer = (state = initialState, action) => {
       });
       return newState;
     }
+    case TYPES.DRAG_HAPPENED:
+      const {
+        droppableIdStart,
+        droppableIdEnd,
+        droppabeIndexStart,
+        droppabeIndexEnd
+      } = action.payload;
+
+      const newState = [...state];
+
+      if (droppableIdStart === droppableIdEnd) {
+        //if drag happens in same list we want to change the index
+        const list = state.find(list => droppableIdStart === list.id);
+        const card = list.cards.splice(droppabeIndexStart, 1);
+        list.cards.splice(droppabeIndexEnd, 0, ...card);
+      }
+
+      //if drag happens to a different list
+
+      if (droppableIdStart !== droppableIdEnd) {
+        const listStart = state.find(list => droppableIdStart === list.id);
+
+        const card = listStart.cards.splice(droppabeIndexStart, 1);
+
+        const listEnd = state.find(list => droppableIdEnd === list.id);
+
+        listEnd.cards.splice(droppabeIndexEnd, 0, ...card);
+      }
+
+      return newState;
 
     default:
       return state;
